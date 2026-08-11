@@ -1,0 +1,37 @@
+name: Build, Push, and Update GitOps
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build and Push Docker Image to ACR
+        run: |
+          az acr build --registry ${{ vars.ACR_NAME }} --image flask-app:${{ github.sha }} .
+
+      - name: Update Helm Chart Values in Git
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          REGISTRY_URL="${{ vars.ACR_NAME }}"
+          
+          # Use sed to update the repository and tag in values.yaml
+          sed -i "s|repository: .*|repository: $REGISTRY_URL/flask-app|g" k8s/helm/flask-app-chart/values.yaml
+          sed -i "s|tag: .*|tag: $IMAGE_TAG|g" k8s/helm/flask-app-chart/values.yaml
+          
+          # Commit and push the updated tag back to GitHub so ArgoCD picks it up
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add k8s/helm/flask-app-chart/values.yaml
+          git commit -m "chore: update image tag to ${{ github.sha }} [skip ci]"
+          git push
