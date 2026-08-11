@@ -16,9 +16,16 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Build and Push Docker Image to ACR
+      - name: Build and Push Docker Image
         run: |
-          az acr build --registry ${{ vars.ACR_NAME }} --image flask-app:${{ github.sha }} .
+          # 1. Log in to Azure Container Registry (this connects the runner's Docker to Azure)
+          az acr login --name ${{ vars.ACR_NAME }}
+          
+          # 2. Build the image locally on the GitHub runner
+          docker build -t ${{ vars.ACR_NAME }}/flask-app:${{ github.sha }} .
+          
+          # 3. Push the newly built image up to Azure
+          docker push ${{ vars.ACR_NAME }}/flask-app:${{ github.sha }}
 
       - name: Update Helm Chart Values in Git
         run: |
