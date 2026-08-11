@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: flask-app-deployment
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nginx
+      app: flask-app
   template:
     metadata:
       labels:
-        app: nginx
+        app: flask-app
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest
+      - name: flask-app
+        image: mcr.microsoft.com/azuredocs/aci-helloworld:latest
         ports:
         - containerPort: 80
