@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: gitopsaksregistry4997.azurecr.io/flask-app
-  tag: 941d606d5761b9fb0e01b237782d445604850c06
+  tag: 68a999def621d2c476c34ed49550605016fdcf07
   pullPolicy: IfNotPresent
 
 service:
