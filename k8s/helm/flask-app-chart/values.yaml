@@ -1,8 +1,8 @@
 replicaCount: 2
 
 image:
-  repository: mcr.microsoft.com/azuredocs/aci-helloworld
-  tag: latest
+  repository: gitopsaksregistry4997.azurecr.io/flask-app
+  tag: 941d606d5761b9fb0e01b237782d445604850c06
   pullPolicy: IfNotPresent
 
 service:
