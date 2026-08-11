@@ -1,0 +1,10 @@
+replicaCount: 2
+
+image:
+  repository: mcr.microsoft.com/azuredocs/aci-helloworld
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
